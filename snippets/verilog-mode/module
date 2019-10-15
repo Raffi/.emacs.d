@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# contributor: Ralf Menzi
+# name: module
+# key: module
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'auto) (yas-also-auto-indent-first-line t) (yas-wrap-around-region t))
+# --
+module ${1:`(file-name-nondirectory (file-name-sans-extension (file-name-sans-extension (buffer-file-name))))`}(/*AUTOARG*/);
+  $0
+endmodule //$1

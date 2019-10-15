@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# contributor: Ralf Menzi
+# name: always_ff
+# key: always_ff
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'auto) (yas-also-auto-indent-first-line t) (yas-wrap-around-region t))
+# --
+always_ff @(posedge ${1:clk} or negedge ${2:reset_n}) begin
+  if (!$2) begin
+    $0
+  end else begin
+    
+  end
+end

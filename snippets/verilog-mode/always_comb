@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# contributor: Ralf Menzi
+# name: always_comb
+# key: always_comb
+# binding: direct-keybinding
+# expand-env: ((yas-indent-line 'auto) (yas-also-auto-indent-first-line t) (yas-wrap-around-region t))
+# --
+always_comb begin
+  $0
+end

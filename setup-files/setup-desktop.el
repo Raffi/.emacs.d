@@ -1,4 +1,4 @@
-;; Time-stamp: <2017-05-08 11:31:21 kmodi>
+;; Time-stamp: <2020-09-10 23:11:53 kmodi>
 
 ;; Desktop save and restore
 
@@ -14,6 +14,9 @@ saved desktop at startup:
 
 > emacs --eval \"(setq modi/no-desktop-read-at-startup t)\"
 ")
+
+    ;; Immediately load 10 buffers and lazy-load the rest.
+    (setq desktop-restore-eager 10)
 
     (setq desktop-base-file-name (concat "emacs_" emacs-version-short
                                          ".desktop"))
@@ -134,6 +137,12 @@ saved desktop at startup:
       "Enable `desktop-save-mode' and restore the last saved desktop."
       (interactive)
       (desktop-save-mode 1)
+      ;; Thu Sep 10 22:52:47 EDT 2020 - kmodi
+      ;; Prevent Desktop conflict messages "Desktop file is more recent .."
+      ;; Desktop file is more recent ((24410 58051 572466 0),(51 36 22 10 9 2020 4 t -14400))
+      ;; than the one loaded ((24410 58051 572462 0),(51 36 22 10 9 2020 4 t -14400)).
+      ;; Save anyway? y
+      (desktop-auto-save-disable)
       (desktop-read))
 
     (when (null modi/no-desktop-read-at-startup)
@@ -141,8 +150,8 @@ saved desktop at startup:
 
     (bind-keys
      :map modi-mode-map
-      ("<S-f2>" . desktop-save-in-desktop-dir)
-      ("<C-f2>" . modi/restore-last-saved-desktop))))
+     ("<S-f2>" . desktop-save-in-desktop-dir)
+     ("<C-f2>" . modi/restore-last-saved-desktop))))
 
 
 (provide 'setup-desktop)

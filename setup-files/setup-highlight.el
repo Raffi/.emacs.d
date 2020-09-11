@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-03-22 17:05:02 kmodi>
+;; Time-stamp: <2020-07-11 15:43:41 kmodi>
 
 ;; Highlight stuff
 
@@ -100,7 +100,7 @@ The same result can also be be achieved by \\[universal-argument] \\[unhighlight
 
     (bind-keys
      :map modi-mode-map
-      ("C-." . modi/hi-lock-face-symbol-at-point-or-sel))))
+     ("C-." . modi/hi-lock-face-symbol-at-point-or-sel))))
 
 ;; Highlight Global
 ;; https://github.com/glen-dai/highlight-global
@@ -113,12 +113,12 @@ The same result can also be be achieved by \\[universal-argument] \\[unhighlight
     (bind-to-modi-map "h" #'highlight-global-hl-frame-toggle)
     (bind-to-modi-map "H" #'highlight-global-clear-hl-frame)))
 
-;; Volatile Highlights
-;; https://github.com/k-talo/volatile-highlights.el
-(use-package volatile-highlights
-  :config
-  (progn
-    (volatile-highlights-mode 1)))
+;; ;; Volatile Highlights
+;; ;; https://github.com/k-talo/volatile-highlights.el
+;; (use-package volatile-highlights
+;;   :config
+;;   (progn
+;;     (volatile-highlights-mode 1)))
 
 ;; Auto Highlight Symbol
 ;; https://github.com/emacsmirror/auto-highlight-symbol
@@ -132,11 +132,11 @@ The same result can also be be achieved by \\[universal-argument] \\[unhighlight
 
     (bind-keys
      :map auto-highlight-symbol-mode-map
-      ("M-<"     . ahs-backward)
-      ("M->"     . ahs-forward)
-      ("M--"     . ahs-back-to-start)
-      ("C-x C-'" . ahs-change-range)
-      ("C-x C-a" . ahs-edit-mode))))
+     ("M-<"     . ahs-backward)
+     ("M->"     . ahs-forward)
+     ("M--"     . ahs-back-to-start)
+     ("C-x C-'" . ahs-change-range)
+     ("C-x C-a" . ahs-edit-mode))))
 
 ;; Highlight line
 (use-package hl-line

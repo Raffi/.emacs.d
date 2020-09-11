@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-04-24 21:33:49 kmodi>
+;; Time-stamp: <2020-09-10 21:53:21 kmodi>
 ;; Author: Kaushal Modi
 
 ;; Global variables
@@ -129,7 +129,7 @@ need Org version to be at least 9.x.")
     undo-tree ; supercool undo visualization
     use-package use-package-chords ; optimize package loading
     visual-regexp
-    volatile-highlights
+    ;; volatile-highlights
     web-mode
     webpaste   ; Paste code snippets to ptpb.pw (default), ix.io, etc.
     which-key ; > guide-key
@@ -219,7 +219,9 @@ need Org version to be at least 9.x.")
 (require 'setup-all)
 (require 'setup-artist)
 (require 'setup-auto-complete)
-(require 'setup-beacon)
+;; Wed Jun 10 16:10:59 EDT 2020 - kmodi
+;; Disabling beacon-mode to see if that solves minor performance glitches
+;; (require 'setup-beacon)
 (require 'setup-bookmarks)
 (require 'setup-buffer-move)
 (require 'setup-calc)
@@ -253,7 +255,8 @@ need Org version to be at least 9.x.")
 (require 'setup-header2)
 (require 'setup-highlight)
 (require 'setup-htmlize)
-(require 'setup-hugo)
+(when (executable-find "hugo")
+  (require 'setup-hugo))
 (require 'setup-hungry-delete)
 (require 'setup-ibuffer)
 (if (bound-and-true-p disable-pkg-ivy)
@@ -309,8 +312,6 @@ need Org version to be at least 9.x.")
 
 ;; Languages
 (require 'setup-conf)
-(when (executable-find "dmd")
-  (require 'setup-d))
 (require 'setup-elisp)
 (when (executable-find "go")
   (require 'setup-go))

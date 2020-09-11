@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-04-22 10:30:46 kmodi>
+;; Time-stamp: <2020-09-01 13:44:20 kmodi>
 
 ;; Functions related to editing text in the buffer
 ;; Contents:
@@ -11,7 +11,7 @@
 ;;  Show Paren
 ;;  Duplicate current line or region
 ;;  Managing white spaces and empty newlines
-;;  Untabify
+;;  Tabs and Untabify
 ;;  Align
 ;;  Eval and replace last sexp
 ;;  My modified basic functions
@@ -259,7 +259,7 @@ want my cursor to move back (\"*|\").
 Do not do anything if `do-not-delete-trailing-whitespace' is non-nil."
   (interactive)
   (unless (if (functionp do-not-delete-trailing-whitespace)
-	      (funcall do-not-delete-trailing-whitespace)
+              (funcall do-not-delete-trailing-whitespace)
             do-not-delete-trailing-whitespace)
     (let ((pre-marker-restore-point (point)))
       ;; Only in org capture buffers, first restore the point to the marker
@@ -297,9 +297,9 @@ Do not do anything if `do-not-delete-trailing-whitespace' is non-nil."
 (add-hook 'before-save-hook #'modi/delete-trailing-whitespace-buffer)
 ;; (remove-hook 'before-save-hook #'modi/delete-trailing-whitespace-buffer)
 
-;;; Untabify
+;;; Tabs and Untabify
+(setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)  ;Use spaces instead of tabs for indentation
-
 (defun modi/untabify-buffer ()
   "Untabify the current buffer.
 
@@ -1158,6 +1158,26 @@ buffer should do the right thing.. `eww-reload' in eww,
     (save-excursion
       (goto-char (point-min))
       (keep-lines regexp))))
+
+(defun modi/search-replace-pairs (sr-pairs)
+  "Search/replace in the buffer/region using SR-PAIRS.
+SR-PAIRS is a list of cons (SEARCH-REGEX . REPLACE-EXPR) where
+the cons elements are strings."
+  (let ((cnt 0)
+        (beg (if (use-region-p) (region-beginning) (point-min)))
+        (end (if (use-region-p) (region-end) (point-max))))
+    (dolist (pair sr-pairs)
+      (let ((search-regex (car pair))
+            (replace-expr (cdr pair)))
+        (save-restriction
+          (narrow-to-region beg end)
+          (save-excursion
+            (goto-char (point-min))
+            (while (re-search-forward search-regex nil :noerror)
+              (replace-match replace-expr)
+              (cl-incf cnt))))))
+    (message "Finished %d replacements" cnt)))
+;; Example use: M-: (modi/search-replace-pairs '(("a" . "b")))
 
 ;;; Bindings
 

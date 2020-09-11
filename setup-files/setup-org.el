@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-09-03 10:28:04 kmodi>
+;; Time-stamp: <2020-09-03 11:19:35 kmodi>
 ;; Hi-lock: (("\\(^;\\{3,\\}\\)\\( *.*\\)" (1 'org-hide prepend) (2 '(:inherit org-level-1 :height 1.3 :weight bold :overline t :underline t) prepend)))
 ;; Hi-Lock: end
 
@@ -112,9 +112,12 @@ This value must match the `infodir' variable in the Org local.mk.")
               (setq Info-directory-list (delete dev-org-info Info-directory-list)))))))
 
     ;; Modules that should always be loaded together with org.el.
-    ;; `org-modules' default: '(org-w3m org-bbdb org-bibtex org-docview org-gnus
-    ;;                          org-info org-irc org-mhe org-rmail)
-    (setq org-modules '(org-info))
+    ;; `org-modules' default:
+    ;; Org 9.3 and older: '(org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail)
+    ;; Org 9.4 and newer: '(ol-w3m ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-irc ol-mhe ol-rmail ol-eww)
+    (if (eq modi/org-version-select 'dev)
+        (setq org-modules '(ol-info))
+      (setq org-modules '(org-info)))
 
     ;; Set my default org-export backends. This variable needs to be set before
     ;; org.el is loaded.
@@ -1458,11 +1461,15 @@ returned value `entity-name' will be nil."
                                         "plantuml"
                                         "awk"
                                         "python"
-                                        "tcl" ;Requires installing ob-tcl.el from Org contrib
                                         ,(if (version< (org-version) "8.3")
                                              "sh" ;ob-shell.el was called ob-sh.el in older Org versions
                                            "shell"))
       "List of languages for which the ob-* packages need to be loaded.")
+
+    ;; Requires installing ob-tcl.el from Org contrib.
+    ;; If `ob-tcl' is available add "tcl" to `modi/ob-enabled-languages'.
+    (when (require 'ob-tcl nil :noerror)
+      (add-to-list 'modi/ob-enabled-languages "tcl"))
 
     (defvar modi/ob-eval-unsafe-languages '("emacs-lisp"
                                             "shell")
@@ -1660,8 +1667,47 @@ Instead it's simpler to use bash."
     ;; Always show the header if the option to show the full or reversed
     ;; path is set.
     (setq org-sticky-header-always-show-header (if org-sticky-header-full-path t nil))
-    (add-hook 'org-mode-hook #'org-sticky-header-mode)))
 
+    ;; https://github.com/alphapapa/org-sticky-header/pull/20
+    (defun org-sticky-header--fetch-stickyline ()
+      "Return string of Org heading or outline path for display in header line."
+      (org-with-wide-buffer
+       (goto-char (window-start))
+       (if (org-before-first-heading-p)
+           ""
+         (progn
+           ;; No non-header lines above top displayed header
+           (when (or org-sticky-header-always-show-header
+                     (not (org-at-heading-p)))
+             ;; Header should be shown
+             (when (fboundp 'org-inlinetask-in-task-p)
+               ;; Skip inline tasks
+               (while (and (org-back-to-heading)
+                           (org-inlinetask-in-task-p))
+                 (forward-line -1)))
+             (cond
+              ;; FIXME: Convert cond back to pcase, but one compatible with Emacs 24
+              ((null org-sticky-header-full-path)
+               (concat (org-sticky-header--get-prefix)
+                       (org-get-heading t t)))
+              ((eq org-sticky-header-full-path 'full)
+               (concat (org-sticky-header--get-prefix)
+                       (org-format-outline-path (org-get-outline-path t)
+                                                (window-width)
+                                                nil org-sticky-header-outline-path-separator)))
+              ((eq org-sticky-header-full-path 'reversed)
+               (let ((s (concat (org-sticky-header--get-prefix)
+                                (mapconcat 'identity
+                                           (nreverse (org-split-string (org-format-outline-path (org-get-outline-path t)
+                                                                                                1000 nil "")
+                                                                       ""))
+                                           org-sticky-header-outline-path-reversed-separator))))
+                 (if (> (length s) (window-width))
+                     (concat (substring s 0 (- (window-width) 2))
+                             "..")
+                   s)))
+              (t "")))))))
+    (add-hook 'org-mode-hook #'org-sticky-header-mode)))
 
 ;;;; Org Link Ref
 ;; Support markdown-style link id references

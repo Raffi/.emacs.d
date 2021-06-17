@@ -1,4 +1,4 @@
-;; Time-stamp: <2020-09-10 21:53:21 kmodi>
+;; Time-stamp: <2021-06-08 09:57:39 kmodi>
 ;; Author: Kaushal Modi
 
 ;; Global variables
@@ -60,7 +60,6 @@ need Org version to be at least 9.x.")
     auto-highlight-symbol
     avy ; > ace-jump-mode
     beacon ; visual flash to show the cursor position
-    benchmark-init
     bm ; visual bookmarks
     buffer-move
     command-log-mode ; for logging commands; useful when demoing emacs
@@ -89,10 +88,9 @@ need Org version to be at least 9.x.")
     ibuffer-projectile
     imenu-list
     indent-guide
-    interleave ; takes notes associated to pdf files in org mode
+    org-noter ; takes notes associated to pdf files in org mode
     isend-mode ; used in setup-perl.el
     ivy swiper counsel
-    iy-go-to-char ; Go to next char which is similar to "f" and "t" in vim
     key-chord ; map pairs of simultaneously pressed keys to commands
     keyfreq ; find which commands you use the most
     kurecolor ; Quick tweaks to color codes in CSS files
@@ -120,7 +118,6 @@ need Org version to be at least 9.x.")
     smart-compile
     smart-mark
     smart-mode-line popup rich-minority
-    smex ; smart M-x
     sunshine forecast ; weather
     sx
     tiny
@@ -185,13 +182,19 @@ need Org version to be at least 9.x.")
 ;;   I call this function in setup-packages.el and so am keeping the
 ;; commented out version here so that package.el does not add it again.
 
-;; Start `benchmark-init' as soon as possible
-(require 'benchmark-init)
-
 (eval-when-compile
   (require 'use-package)                ;Auto-requires `bind-key' too
   (setq use-package-always-ensure nil))
 (require 'use-package-chords)
+
+(use-package benchmark-init
+  :demand t
+  :load-path "elisp/manually-synced/benchmark-init-el"
+  :config
+  (progn
+    ;; https://github.com/dholm/benchmark-init-el/issues/15#issuecomment-766010566
+    (require 'benchmark-init-modes)     ;Explicitly required
+    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
 ;; Enable `modi-mode' unless `disable-pkg-modi-mode' is set to `t' in
 ;; `setup-var-overrides.el'.
@@ -224,6 +227,7 @@ need Org version to be at least 9.x.")
 ;; (require 'setup-beacon)
 (require 'setup-bookmarks)
 (require 'setup-buffer-move)
+(require 'setup-c)
 (require 'setup-calc)
 (require 'setup-command-log-mode)
 (require 'setup-counsel)
@@ -292,7 +296,6 @@ need Org version to be at least 9.x.")
 (when (executable-find "rg")
   (require 'setup-rg))
 (require 'setup-server)
-(require 'setup-smex)
 (require 'setup-sx)
 (require 'setup-term)
 (require 'setup-tiny)

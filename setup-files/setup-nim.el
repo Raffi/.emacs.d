@@ -1,4 +1,4 @@
-;; Time-stamp: <2019-06-13 23:16:30 kmodi>
+;; Time-stamp: <2021-06-01 14:24:43 kmodi>
 
 ;; Nim
 ;; https://github.com/nim-lang/nim-mode
